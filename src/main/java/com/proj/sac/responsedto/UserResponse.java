@@ -18,5 +18,5 @@ public class UserResponse
 	private String email;
 	private UserRole userRole;
 	private boolean isEmailVerified;
-	private String isDeleted;
+	private boolean isDeleted;
 }
