@@ -8,5 +8,5 @@ import com.proj.sac.util.ResponseStructure;
 
 public interface AuthService 
 {
-	ResponseEntity<ResponseStructure<UserResponse>> requestUser(UserRequest userRequest);
+	ResponseEntity<ResponseStructure<UserResponse>> register(UserRequest userRequest);
 }
