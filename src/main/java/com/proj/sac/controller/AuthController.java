@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proj.sac.requestdto.OTPmodel;
 import com.proj.sac.requestdto.UserRequest;
 import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.service.AuthService;
@@ -23,5 +24,11 @@ public class AuthController
 	public ResponseEntity<ResponseStructure<UserResponse>> requestUser(@RequestBody UserRequest userRequest)
 	{
 		return service.register(userRequest);
+	}
+
+	@PostMapping(path = "/verify-otp")
+	public ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(@RequestBody OTPmodel OTP)
+	{
+		return service.verifyOTP(OTP);
 	}
 }

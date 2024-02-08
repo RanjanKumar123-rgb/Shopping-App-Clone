@@ -32,7 +32,8 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll().anyRequest().authenticated())//these both should be at the last
 				.formLogin(Customizer.withDefaults()).build();
 	}
-
+	
+	@Bean
 	AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(customUserDetailsService);

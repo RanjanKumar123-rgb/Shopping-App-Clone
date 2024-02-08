@@ -1,9 +1,12 @@
 package com.proj.sac.serviceimpl;
 
+import java.util.Random;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.proj.sac.cache.CacheStore;
 import com.proj.sac.entity.Customer;
 import com.proj.sac.entity.Seller;
 import com.proj.sac.entity.User;
@@ -11,6 +14,7 @@ import com.proj.sac.exception.UserAlreadyExistEception;
 import com.proj.sac.repo.CustomerRepo;
 import com.proj.sac.repo.SellerRepo;
 import com.proj.sac.repo.UserRepo;
+import com.proj.sac.requestdto.OTPmodel;
 import com.proj.sac.requestdto.UserRequest;
 import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.service.AuthService;
@@ -26,22 +30,48 @@ public class AuthServiceImpl implements AuthService
 	private CustomerRepo customerRepo;
 	private SellerRepo sellerRepo;
 	private ResponseStructure<UserResponse> structure;
+	private CacheStore<String> otpCacheStore;
+	private CacheStore<User> userCacheStore;
+	
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> register(UserRequest userRequest) 
 	{
-		User user = userRepo.findByUsername(userRequest.getEmail().split("@")[0]).map(u->{
-			if(u.isEmailVerified()) 
+			if(userRepo.existsByEmail(userRequest.getEmail())) 
 				throw new UserAlreadyExistEception("User already exists. Try a new email id !!!");
-			else {
-				System.out.println("Email Sent !!");
-				//send a email to the client with OTP
-				return u;
-			}
-		}).orElseGet(() -> saveUser(mapToRespective(userRequest)));	
+			
+			String OTP = generateOTP();
+			User user = mapToRespective(userRequest);
+			userCacheStore.add(userRequest.getEmail(), user);
+			otpCacheStore.add(userRequest.getEmail(), OTP);
+			
+			
 		return new ResponseEntity<ResponseStructure<UserResponse>>(structure.setStatusCode(HttpStatus.ACCEPTED.value())
-				.setMessage("Please verify your email id using OTP sent")
+				.setMessage("Please verify your email id using OTP sent. OTP: "+OTP)
 				.setData(mapToResponse(user)), HttpStatus.ACCEPTED);
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(OTPmodel OTP) 
+	{
+		User user = userCacheStore.get(OTP.getEmail());
+		String otp = otpCacheStore.get(OTP.getEmail());
+		
+		if(otp!=null)
+		{
+			if(user!=null)
+			{
+				if(otp.equals(OTP.getOtp()))
+				{
+					user.setEmailVerified(true);
+					userRepo.save(user);
+					return new ResponseEntity<ResponseStructure<UserResponse>>(HttpStatus.OK);
+				}else
+					throw new RuntimeException("Invalid OTP");
+			}else 
+				throw new UserAlreadyExistEception("User already exists !!!");
+		}else 
+			throw new RuntimeException("Otp expired !!!");
 	}
 
 	public UserResponse mapToResponse(User user) 
@@ -86,5 +116,10 @@ public class AuthServiceImpl implements AuthService
 			default -> throw new RuntimeException();
 		}
 		return user;
+	}
+	
+	private String generateOTP()
+	{
+		return String.valueOf(new Random().nextInt(100000, 999999));
 	}
 }
