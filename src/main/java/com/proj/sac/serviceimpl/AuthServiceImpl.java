@@ -4,6 +4,9 @@ import java.util.Random;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.proj.sac.cache.CacheStore;
@@ -18,8 +21,11 @@ import com.proj.sac.requestdto.OTPmodel;
 import com.proj.sac.requestdto.UserRequest;
 import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.service.AuthService;
+import com.proj.sac.util.MessageStructure;
 import com.proj.sac.util.ResponseStructure;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -32,6 +38,7 @@ public class AuthServiceImpl implements AuthService
 	private ResponseStructure<UserResponse> structure;
 	private CacheStore<String> otpCacheStore;
 	private CacheStore<User> userCacheStore;
+	private JavaMailSender javaMailSender;
 	
 
 	@Override
@@ -74,6 +81,20 @@ public class AuthServiceImpl implements AuthService
 			throw new RuntimeException("Otp expired !!!");
 	}
 
+	@Async
+	private void sendMail(MessageStructure message) throws MessagingException
+	{
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
+		
+		helper.setTo(message.getTo());
+		helper.setSubject(message.getSubject());
+		helper.setSentDate(message.getSentDate());
+		helper.setText(message.getText());
+		
+		javaMailSender.send(mimeMessage);
+	}
+	
 	public UserResponse mapToResponse(User user) 
 	{
 		return UserResponse.builder()
