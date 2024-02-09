@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proj.sac.requestdto.AuthRequest;
 import com.proj.sac.requestdto.OTPmodel;
 import com.proj.sac.requestdto.UserRequest;
+import com.proj.sac.responsedto.AuthResponse;
 import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.service.AuthService;
 import com.proj.sac.util.ResponseStructure;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -30,5 +34,11 @@ public class AuthController
 	public ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(@RequestBody OTPmodel OTP)
 	{
 		return service.verifyOTP(OTP);
+	}
+	
+	@PostMapping(path = "/login")
+	public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest, HttpServletResponse response)
+	{
+		return service.login(authRequest, response);
 	}
 }

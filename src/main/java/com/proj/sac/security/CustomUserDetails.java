@@ -1,8 +1,10 @@
 package com.proj.sac.security;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.proj.sac.entity.User;
@@ -19,8 +21,7 @@ public class CustomUserDetails implements UserDetails
 	 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.singleton(new SimpleGrantedAuthority(user.getUserRole().name()));
 	}
 
 	@Override

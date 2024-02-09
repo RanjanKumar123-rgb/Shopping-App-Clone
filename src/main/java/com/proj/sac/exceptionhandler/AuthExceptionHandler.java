@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,5 +26,11 @@ public class AuthExceptionHandler
 	public ResponseEntity<Object> handleUserAlreadyExistEception(UserAlreadyExistEception ex)
 	{
 		return structure(HttpStatus.UNAUTHORIZED, ex.getMessage(), "User ID already exist. Try a new user id !!!");
+	}
+	
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ResponseEntity<Object> handleUsernameNotFoundException(UserAlreadyExistEception ex)
+	{
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Failed to authenticate the User !!!");
 	}
 }
