@@ -19,5 +19,20 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class ScheduledJobs 
 {
+	private RefreshTokenRepo refreshTokenRepo;
+	private AccessTokenRepo accessTokenRepo;
 	
+	@Scheduled(cron = "0 */6 * * *")
+	public void removeExpiredRefreshToken() {
+
+		List<RefreshToken> refreshTokenList = refreshTokenRepo.findByExpirationBefore(LocalDateTime.now());
+		refreshTokenRepo.deleteAll(refreshTokenList);
+	}
+
+	@Scheduled(cron = "0 */6 * * *")
+	public void removeExpiredAccessToken() {
+
+		List<AccessToken> accessTokenList = accessTokenRepo.findByExpirationBefore(LocalDateTime.now());
+		accessTokenRepo.deleteAll(accessTokenList);
+	}
 }
