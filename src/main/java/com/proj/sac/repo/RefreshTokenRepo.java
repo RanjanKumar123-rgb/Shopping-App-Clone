@@ -6,5 +6,5 @@ import com.proj.sac.entity.RefreshToken;
 
 public interface RefreshTokenRepo extends JpaRepository<RefreshToken, Integer>
 {
-
+	RefreshToken findByToken(String token);
 }

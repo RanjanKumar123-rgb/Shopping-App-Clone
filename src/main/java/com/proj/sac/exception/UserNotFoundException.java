@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAlreadyExistEception extends RuntimeException
+public class UserNotFoundException extends RuntimeException
 {
 	private String message;
 }
