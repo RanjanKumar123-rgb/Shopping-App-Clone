@@ -200,13 +200,6 @@ public class AuthServiceImpl implements AuthService
 		return new ResponseEntity<SimpleResponseStructure<AuthResponse>>(simpleStructure, HttpStatus.ACCEPTED);
 	}
 	
-	@Override
-	public void deleteExpiredTokens() 
-	{
-		
-	}
-	
-	
 	@Async
 	private void sendMail(MessageStructure message) throws MessagingException
 	{
