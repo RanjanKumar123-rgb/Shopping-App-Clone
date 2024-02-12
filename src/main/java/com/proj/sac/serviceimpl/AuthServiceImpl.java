@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -199,6 +200,26 @@ public class AuthServiceImpl implements AuthService
 		
 		return new ResponseEntity<SimpleResponseStructure<AuthResponse>>(simpleStructure, HttpStatus.ACCEPTED);
 	}
+	
+	@Override
+	public ResponseEntity<SimpleResponseStructure<AuthResponse>> revokeAllDevices() 
+	{
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+	       userRepo.findByUsername(username).ifPresent(user -> {
+	           accessTokenRepo.findByUserAndIsBlocked(user,false).ifPresent(accessToken -> {
+	               accessToken.setBlocked(true);
+	               accessTokenRepo.save(accessToken);
+	           });
+	           refreshTokenRepo.findByTokenAndIsBlocked(user,false).ifPresent(refreshToken -> {
+	               refreshToken.setBlocked(true);
+	               refreshTokenRepo.save(refreshToken);
+	           });
+	       });
+	       simpleStructure.setMessage("Revoked from all devices");
+	       simpleStructure.setStatusCode(HttpStatus.OK.value());
+	        return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+	}
+	
 	
 	@Async
 	private void sendMail(MessageStructure message) throws MessagingException

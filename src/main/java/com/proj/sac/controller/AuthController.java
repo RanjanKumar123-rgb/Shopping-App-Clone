@@ -49,4 +49,10 @@ public class AuthController
 	{
 		return service.logout(refreshToken, accessToken, response);
 	}
+	
+	@PostMapping(path = "/revoke-all")
+	public ResponseEntity<SimpleResponseStructure<AuthResponse>> revokeAllDevices()
+	{
+		return service.revokeAllDevices();
+	}
 }
