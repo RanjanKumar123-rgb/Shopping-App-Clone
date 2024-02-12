@@ -17,7 +17,6 @@ import com.proj.sac.service.AuthService;
 import com.proj.sac.util.ResponseStructure;
 import com.proj.sac.util.SimpleResponseStructure;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
