@@ -2,6 +2,7 @@ package com.proj.sac.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,9 @@ import com.proj.sac.responsedto.AuthResponse;
 import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.service.AuthService;
 import com.proj.sac.util.ResponseStructure;
+import com.proj.sac.util.SimpleResponseStructure;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -40,5 +43,11 @@ public class AuthController
 	public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest, HttpServletResponse response)
 	{
 		return service.login(authRequest, response);
+	}
+	
+	@PostMapping(path = "/logout")
+	public ResponseEntity<SimpleResponseStructure<AuthResponse>> logout(@CookieValue(name = "rt", required = false) String refreshToken,@CookieValue(name = "at", required = false) String accessToken ,HttpServletResponse response)
+	{
+		return service.logout(refreshToken, accessToken, response);
 	}
 }

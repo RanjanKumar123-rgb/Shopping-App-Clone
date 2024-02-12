@@ -24,6 +24,7 @@ import com.proj.sac.entity.RefreshToken;
 import com.proj.sac.entity.Seller;
 import com.proj.sac.entity.User;
 import com.proj.sac.exception.UserAlreadyExistEception;
+import com.proj.sac.exception.UserNotFoundException;
 import com.proj.sac.repo.AccessTokenRepo;
 import com.proj.sac.repo.CustomerRepo;
 import com.proj.sac.repo.RefreshTokenRepo;
@@ -39,6 +40,7 @@ import com.proj.sac.service.AuthService;
 import com.proj.sac.util.CookieManager;
 import com.proj.sac.util.MessageStructure;
 import com.proj.sac.util.ResponseStructure;
+import com.proj.sac.util.SimpleResponseStructure;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -55,6 +57,7 @@ public class AuthServiceImpl implements AuthService
 	private SellerRepo sellerRepo;
 	private ResponseStructure<UserResponse> structure;
 	private ResponseStructure<AuthResponse> authStructure;
+	private SimpleResponseStructure<AuthResponse> simpleStructure;
 	private CacheStore<String> otpCacheStore;
 	private CacheStore<User> userCacheStore;
 	private JavaMailSender javaMailSender;
@@ -75,6 +78,7 @@ public class AuthServiceImpl implements AuthService
 				SellerRepo sellerRepo,
 				ResponseStructure<UserResponse> structure,
 				ResponseStructure<AuthResponse> authStructure, 
+				SimpleResponseStructure<AuthResponse> simpleStructure,
 				CacheStore<String> otpCacheStore,
 				CacheStore<User> userCacheStore, 
 				JavaMailSender javaMailSender, 
@@ -91,6 +95,7 @@ public class AuthServiceImpl implements AuthService
 		this.sellerRepo = sellerRepo;
 		this.structure = structure;
 		this.authStructure = authStructure;
+		this.simpleStructure = simpleStructure;
 		this.otpCacheStore = otpCacheStore;
 		this.userCacheStore = userCacheStore;
 		this.javaMailSender = javaMailSender;
@@ -152,7 +157,8 @@ public class AuthServiceImpl implements AuthService
 	public ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest, HttpServletResponse response) 
 	{
 		String username = authRequest.getEmail().split("@")[0];
-		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken (username, authRequest.getPassword());
+		String password = authRequest.getPassword();
+		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
 		Authentication authentication = authenticationManager.authenticate(token);
 		if(!authentication.isAuthenticated())
 			throw new UsernameNotFoundException("Failed to authenticate the User");
@@ -170,6 +176,36 @@ public class AuthServiceImpl implements AuthService
 											.build()).setMessage(""));
 			}).get();
 	}
+	
+	@Override
+	public ResponseEntity<SimpleResponseStructure<AuthResponse>> logout(String rt, String at ,HttpServletResponse response) 
+	{
+		if(rt == null && at == null)
+			throw new UserNotFoundException("Username doesnt exist");
+		
+		AccessToken accessToken = accessTokenRepo.findByToken(at);
+		accessToken.setBlocked(true);
+		accessTokenRepo.save(accessToken);
+		
+		RefreshToken refreshToken = refreshTokenRepo.findByToken(rt);
+		refreshToken.setBlocked(true);
+		refreshTokenRepo.save(refreshToken);
+		
+		response.addCookie(cookieManager.invalidate(new Cookie("at", "")));
+		response.addCookie(cookieManager.invalidate(new Cookie("rt", "")));
+		
+		simpleStructure.setMessage("Logout Successful");
+		simpleStructure.setStatusCode(HttpStatus.GONE.value());
+		
+		return new ResponseEntity<SimpleResponseStructure<AuthResponse>>(simpleStructure, HttpStatus.ACCEPTED);
+	}
+	
+	@Override
+	public void deleteExpiredTokens() 
+	{
+		
+	}
+	
 	
 	@Async
 	private void sendMail(MessageStructure message) throws MessagingException
@@ -200,12 +236,14 @@ public class AuthServiceImpl implements AuthService
 				.token(accessToken)
 				.isBlocked(false)
 				.expiration(LocalDateTime.now().plusSeconds(accessExpiryInSecs))
+				.user(user)
 				.build());
 		
 		refreshTokenRepo.save(RefreshToken.builder()
 				.token(refreshToken)
 				.isBlocked(false)
 				.expiration(LocalDateTime.now().plusSeconds(refreshExpiryInSecs))
+				.user(user)
 				.build());
 	}
 	

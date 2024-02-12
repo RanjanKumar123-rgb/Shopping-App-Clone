@@ -2,7 +2,6 @@ package com.proj.sac.entity;
 
 import com.proj.sac.enums.UserRole;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
