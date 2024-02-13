@@ -240,7 +240,29 @@ public class AuthServiceImpl implements AuthService
         return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
     }
 	
-
+	@Override
+	public ResponseEntity<SimpleResponseStructure> refreshLogin(String accessToken, String refreshToken, HttpServletResponse response) 
+	{
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		userRepo.findByUsername(userName).ifPresent(user->{
+			if(accessToken==null) {
+				grantAccess(response, user);
+			}else {
+				blockAccessTokens(accessTokenRepo.findAllByUserAndIsBlockedAndTokenNot(user, false, accessToken));
+			}
+			if(refreshToken==null) {
+				throw new UserNotLoggedInException("user not logged in");
+			}else {
+				blockRefreshTokens(refreshTokenRepo.findByUserAndIsBlockedAndTokenNot(user, false, refreshToken));
+				grantAccess(response, user);
+			}
+		});
+		
+		simpleStructure.setMessage("Refresh Token Refreshed");
+        simpleStructure.setStatusCode(HttpStatus.OK.value());
+        
+        return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+	}
 	
 	
 	
