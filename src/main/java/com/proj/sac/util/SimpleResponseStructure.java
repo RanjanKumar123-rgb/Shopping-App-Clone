@@ -3,7 +3,7 @@ package com.proj.sac.util;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SimpleResponseStructure<T>
+public class SimpleResponseStructure
 {
 	private int statusCode;
 	private String message;

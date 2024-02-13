@@ -2,6 +2,7 @@ package com.proj.sac.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,20 +40,35 @@ public class AuthController
 	}
 	
 	@PostMapping(path = "/login")
-	public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody AuthRequest authRequest, HttpServletResponse response)
+	public ResponseEntity<ResponseStructure<AuthResponse>> login(@CookieValue(name = "rt", required = false) String refreshToken,@CookieValue(name = "at", required = false) String accessToken, @RequestBody AuthRequest authRequest, HttpServletResponse response)
 	{
-		return service.login(authRequest, response);
+		return service.login(refreshToken, accessToken, authRequest, response);
 	}
 	
+	@PreAuthorize(value = "hasAuthority('SELLER') or hasAuthority('CUSTOMER')")
 	@PostMapping(path = "/logout")
-	public ResponseEntity<SimpleResponseStructure<AuthResponse>> logout(@CookieValue(name = "rt", required = false) String refreshToken,@CookieValue(name = "at", required = false) String accessToken ,HttpServletResponse response)
+	public ResponseEntity<SimpleResponseStructure> logout(@CookieValue(name = "rt", required = false) String refreshToken,@CookieValue(name = "at", required = false) String accessToken ,HttpServletResponse response)
 	{
 		return service.logout(refreshToken, accessToken, response);
 	}
 	
+	@PreAuthorize(value = "hasAuthority('SELLER') or hasAuthority('CUSTOMER')")
 	@PostMapping(path = "/revoke-all")
-	public ResponseEntity<SimpleResponseStructure<AuthResponse>> revokeAllDevices()
+	public ResponseEntity<SimpleResponseStructure> revokeAllDevices()
 	{
 		return service.revokeAllDevices();
+	}
+	
+	@PreAuthorize(value = "hasAuthority('SELLER') or hasAuthority('CUSTOMER')")
+	@PostMapping(path = "/revoke-others")
+	public ResponseEntity<SimpleResponseStructure> revokeOtherDevices(@CookieValue(name = "rt",required = false)String refreshToken, @CookieValue(name = "at")String accessToken, HttpServletResponse response)
+	{
+		return service.revokeOtherDevices(accessToken, refreshToken, response);
+	}
+	
+	@PostMapping(path = "/refresh-login")
+	public ResponseEntity<SimpleResponseStructure> refreshLogin(@CookieValue(name = "rt",required = false)String refreshToken, @CookieValue(name = "at")String accessToken, HttpServletResponse response)
+	{
+		return service.refreshLogin(accessToken, refreshToken, response);
 	}
 }

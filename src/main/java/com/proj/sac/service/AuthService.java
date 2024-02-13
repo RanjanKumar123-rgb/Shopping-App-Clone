@@ -10,7 +10,6 @@ import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.util.ResponseStructure;
 import com.proj.sac.util.SimpleResponseStructure;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService 
@@ -19,9 +18,13 @@ public interface AuthService
 
 	ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(OTPmodel otpModel);
 
-	ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest, HttpServletResponse response);
+	ResponseEntity<ResponseStructure<AuthResponse>> login(String refreshToken, String accessToken, AuthRequest authRequest, HttpServletResponse response);
 
-	ResponseEntity<SimpleResponseStructure<AuthResponse>> logout(String refreshToken, String accessToken, HttpServletResponse response);
+	ResponseEntity<SimpleResponseStructure> logout(String refreshToken, String accessToken, HttpServletResponse response);
 
-	ResponseEntity<SimpleResponseStructure<AuthResponse>> revokeAllDevices();
+	ResponseEntity<SimpleResponseStructure> revokeAllDevices();
+
+	ResponseEntity<SimpleResponseStructure> revokeOtherDevices(String accessToken, String refreshToken, HttpServletResponse response);
+
+	ResponseEntity<SimpleResponseStructure> refreshLogin(String accessToken, String refreshToken, HttpServletResponse response);
 }
