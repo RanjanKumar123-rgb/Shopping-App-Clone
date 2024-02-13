@@ -2,6 +2,7 @@ package com.proj.sac.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.proj.sac.entity.AccessToken;
 import com.proj.sac.entity.RefreshToken;
 import com.proj.sac.entity.User;
 
@@ -15,4 +16,6 @@ public interface RefreshTokenRepo extends JpaRepository<RefreshToken, Integer>
 	RefreshToken findByToken(String token);
 	List<RefreshToken> findByExpirationBefore(LocalDateTime expiration);
 	Optional<RefreshToken> findByTokenAndIsBlocked(User user, boolean b);
+	List<RefreshToken> findAllByUserAndIsBlockedAndTokenNot(User user, boolean b, String refreshToken);
+	Optional<RefreshToken> findByUserAndIsBlocked(User user, boolean b);
 }

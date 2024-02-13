@@ -2,6 +2,7 @@ package com.proj.sac.serviceimpl;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -210,7 +211,7 @@ public class AuthServiceImpl implements AuthService
 	               accessToken.setBlocked(true);
 	               accessTokenRepo.save(accessToken);
 	           });
-	           refreshTokenRepo.findByTokenAndIsBlocked(user,false).ifPresent(refreshToken -> {
+	           refreshTokenRepo.findByUserAndIsBlocked(user,false).ifPresent(refreshToken -> {
 	               refreshToken.setBlocked(true);
 	               refreshTokenRepo.save(refreshToken);
 	           });
@@ -220,6 +221,39 @@ public class AuthServiceImpl implements AuthService
 	        return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
 	}
 	
+	@Override
+    public ResponseEntity<SimpleResponseStructure<AuthResponse>> revokeOtherDevices(String accessToken, String refreshToken, HttpServletResponse response) 
+	{
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        userRepo.findByUsername(username).ifPresent(user -> {
+            blockAccessTokens(accessTokenRepo.findAllByUserAndIsBlockedAndTokenNot(user, false, accessToken));
+            blockRefreshTokens(refreshTokenRepo.findAllByUserAndIsBlockedAndTokenNot(user, false, refreshToken));
+            
+        });
+        simpleStructure.setMessage("Revoked from all other devices");
+        simpleStructure.setStatusCode(HttpStatus.OK.value());
+        
+        return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+    }
+	
+	
+//	=========================================================================================================================================
+	
+	private void blockAccessTokens(List<AccessToken> accessTokens)
+	{
+		accessTokens.forEach(at -> {
+			at.setBlocked(true);
+			accessTokenRepo.save(at);
+		});
+	}
+	
+	private void blockRefreshTokens(List<RefreshToken> refreshTokens)
+	{
+		refreshTokens.forEach(rt -> {
+			rt.setBlocked(true);
+			refreshTokenRepo.save(rt);
+		});
+	}
 	
 	@Async
 	private void sendMail(MessageStructure message) throws MessagingException
