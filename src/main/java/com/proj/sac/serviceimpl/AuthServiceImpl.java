@@ -27,6 +27,7 @@ import com.proj.sac.entity.Seller;
 import com.proj.sac.entity.User;
 import com.proj.sac.exception.UserAlreadyExistEception;
 import com.proj.sac.exception.UserNotFoundException;
+import com.proj.sac.exception.UserNotLoggedInException;
 import com.proj.sac.repo.AccessTokenRepo;
 import com.proj.sac.repo.CustomerRepo;
 import com.proj.sac.repo.RefreshTokenRepo;
@@ -59,7 +60,7 @@ public class AuthServiceImpl implements AuthService
 	private SellerRepo sellerRepo;
 	private ResponseStructure<UserResponse> structure;
 	private ResponseStructure<AuthResponse> authStructure;
-	private SimpleResponseStructure<AuthResponse> simpleStructure;
+	private SimpleResponseStructure simpleStructure;
 	private CacheStore<String> otpCacheStore;
 	private CacheStore<User> userCacheStore;
 	private JavaMailSender javaMailSender;
@@ -80,7 +81,7 @@ public class AuthServiceImpl implements AuthService
 				SellerRepo sellerRepo,
 				ResponseStructure<UserResponse> structure,
 				ResponseStructure<AuthResponse> authStructure, 
-				SimpleResponseStructure<AuthResponse> simpleStructure,
+				SimpleResponseStructure simpleStructure,
 				CacheStore<String> otpCacheStore,
 				CacheStore<User> userCacheStore, 
 				JavaMailSender javaMailSender, 
@@ -156,8 +157,10 @@ public class AuthServiceImpl implements AuthService
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<AuthResponse>> login(AuthRequest authRequest, HttpServletResponse response) 
+	public ResponseEntity<ResponseStructure<AuthResponse>> login(String refreshToken, String accessToken, AuthRequest authRequest, HttpServletResponse response) 
 	{
+		if(accessToken != null || refreshToken !=null)  throw new RuntimeException("User already  logged in !!!");
+		else {
 		String username = authRequest.getEmail().split("@")[0];
 		String password = authRequest.getPassword();
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
@@ -177,10 +180,11 @@ public class AuthServiceImpl implements AuthService
 											.refreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiryInSecs))
 											.build()).setMessage(""));
 			}).get();
+		}
 	}
 	
 	@Override
-	public ResponseEntity<SimpleResponseStructure<AuthResponse>> logout(String rt, String at ,HttpServletResponse response) 
+	public ResponseEntity<SimpleResponseStructure> logout(String rt, String at ,HttpServletResponse response) 
 	{
 		if(rt == null && at == null)
 			throw new UserNotFoundException("Username doesnt exist");
@@ -199,35 +203,35 @@ public class AuthServiceImpl implements AuthService
 		simpleStructure.setMessage("Logout Successful");
 		simpleStructure.setStatusCode(HttpStatus.GONE.value());
 		
-		return new ResponseEntity<SimpleResponseStructure<AuthResponse>>(simpleStructure, HttpStatus.ACCEPTED);
+		return new ResponseEntity<SimpleResponseStructure>(simpleStructure, HttpStatus.ACCEPTED);
 	}
 	
 	@Override
-	public ResponseEntity<SimpleResponseStructure<AuthResponse>> revokeAllDevices() 
+	public ResponseEntity<SimpleResponseStructure> revokeAllDevices() 
 	{
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 	       userRepo.findByUsername(username).ifPresent(user -> {
-	           accessTokenRepo.findByUserAndIsBlocked(user,false).ifPresent(accessToken -> {
+	           accessTokenRepo.findByUserAndIsBlocked(user,false).forEach(accessToken -> {
 	               accessToken.setBlocked(true);
 	               accessTokenRepo.save(accessToken);
 	           });
-	           refreshTokenRepo.findByUserAndIsBlocked(user,false).ifPresent(refreshToken -> {
+	           refreshTokenRepo.findByUserAndIsBlocked(user,false).forEach(refreshToken -> {
 	               refreshToken.setBlocked(true);
 	               refreshTokenRepo.save(refreshToken);
 	           });
 	       });
 	       simpleStructure.setMessage("Revoked from all devices");
 	       simpleStructure.setStatusCode(HttpStatus.OK.value());
-	        return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+	        return new ResponseEntity<SimpleResponseStructure>(simpleStructure,HttpStatus.OK);
 	}
 	
 	@Override
-    public ResponseEntity<SimpleResponseStructure<AuthResponse>> revokeOtherDevices(String accessToken, String refreshToken, HttpServletResponse response) 
+    public ResponseEntity<SimpleResponseStructure> revokeOtherDevices(String accessToken, String refreshToken, HttpServletResponse response) 
 	{
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         userRepo.findByUsername(username).ifPresent(user -> {
-            blockAccessTokens(accessTokenRepo.findAllByUserAndIsBlockedAndTokenNot(user, false, accessToken));
-            blockRefreshTokens(refreshTokenRepo.findAllByUserAndIsBlockedAndTokenNot(user, false, refreshToken));
+            blockAccessTokens(accessTokenRepo.findByUserAndIsBlockedAndTokenNot(user, false, accessToken));
+            blockRefreshTokens(refreshTokenRepo.findByUserAndIsBlockedAndTokenNot(user, false, refreshToken));
             
         });
         simpleStructure.setMessage("Revoked from all other devices");
@@ -235,6 +239,10 @@ public class AuthServiceImpl implements AuthService
         
         return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
     }
+	
+
+	
+	
 	
 	
 //	=========================================================================================================================================
