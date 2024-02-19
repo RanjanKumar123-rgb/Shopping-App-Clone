@@ -1,9 +1,9 @@
 package com.proj.sac.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +19,14 @@ import com.proj.sac.util.ResponseStructure;
 import com.proj.sac.util.SimpleResponseStructure;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1")
+@AllArgsConstructor
+@CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173/")
 public class AuthController 
 {
-	@Autowired
 	AuthService service;
 	
 	@PostMapping(path = "/register")
@@ -61,13 +63,13 @@ public class AuthController
 	
 	@PreAuthorize(value = "hasAuthority('SELLER') or hasAuthority('CUSTOMER')")
 	@PostMapping(path = "/revoke-others")
-	public ResponseEntity<SimpleResponseStructure> revokeOtherDevices(@CookieValue(name = "rt",required = false)String refreshToken, @CookieValue(name = "at")String accessToken, HttpServletResponse response)
+	public ResponseEntity<SimpleResponseStructure> revokeOtherDevices(@CookieValue(name = "rt",required = false) String refreshToken, @CookieValue(name = "at",required = false) String accessToken, HttpServletResponse response)
 	{
 		return service.revokeOtherDevices(accessToken, refreshToken, response);
 	}
 	
-	@PostMapping(path = "/refresh-login")
-	public ResponseEntity<SimpleResponseStructure> refreshLogin(@CookieValue(name = "rt",required = false)String refreshToken, @CookieValue(name = "at")String accessToken, HttpServletResponse response)
+	@PostMapping(path = "/refresh")
+	public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(@CookieValue(name = "rt",required = false) String refreshToken, @CookieValue(name = "at",required = false) String accessToken, HttpServletResponse response)
 	{
 		return service.refreshLogin(accessToken, refreshToken, response);
 	}

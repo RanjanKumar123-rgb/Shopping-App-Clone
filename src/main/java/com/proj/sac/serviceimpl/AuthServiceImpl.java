@@ -178,7 +178,7 @@ public class AuthServiceImpl implements AuthService
 											.isAuthenticated(true)
 											.accessExpiration(LocalDateTime.now().plusSeconds(accessExpiryInSecs))
 											.refreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiryInSecs))
-											.build()).setMessage(""));
+											.build()).setMessage("Logged In"));
 			}).get();
 		}
 	}
@@ -241,10 +241,11 @@ public class AuthServiceImpl implements AuthService
     }
 	
 	@Override
-	public ResponseEntity<SimpleResponseStructure> refreshLogin(String accessToken, String refreshToken, HttpServletResponse response) 
+	public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String accessToken, String refreshToken, HttpServletResponse response) 
 	{
-		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		userRepo.findByUsername(userName).ifPresent(user->{
+		String username = jwtService.extractUsername(refreshToken);
+		System.out.println(username);
+		userRepo.findByUsername(username).ifPresent(user->{
 			if(accessToken==null) {
 				grantAccess(response, user);
 			}else {
@@ -258,15 +259,21 @@ public class AuthServiceImpl implements AuthService
 			}
 		});
 		
-		simpleStructure.setMessage("Refresh Token Refreshed");
-        simpleStructure.setStatusCode(HttpStatus.OK.value());
-        
-        return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+		return userRepo.findByUsername(username).map(user -> {
+			grantAccess(response, user);
+			return ResponseEntity.ok(authStructure.setStatusCode(HttpStatus.OK.value())
+								.setData(AuthResponse.builder()
+										.userId(user.getUserId())
+										.username(username)
+										.role(user.getUserRole().name())
+										.isAuthenticated(true)
+										.accessExpiration(LocalDateTime.now().plusSeconds(accessExpiryInSecs))
+										.refreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiryInSecs))
+										.build()).setMessage("Refresh Token Refreshed !!!"));
+		}).get();
 	}
 	
-	
-	
-	
+
 //	=========================================================================================================================================
 	
 	private void blockAccessTokens(List<AccessToken> accessTokens)

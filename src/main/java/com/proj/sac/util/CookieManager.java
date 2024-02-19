@@ -21,19 +21,10 @@ public class CookieManager
 		
 		return cookie;
 	}
-	
-	public Cookie invalidateCookie(Cookie cookie, String data, int expirationInSecs)
-	{
-		cookie.setPath("/");
-		cookie.setMaxAge(0);
-		
-		return cookie;
-	}
 
 	public Cookie invalidate(Cookie cookie) 
 	{
 		cookie.setMaxAge(0);
-        cookie.setValue(null);
         cookie.setPath("/"); 
         return cookie;
 	}
