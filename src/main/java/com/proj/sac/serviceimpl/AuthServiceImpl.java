@@ -71,6 +71,7 @@ public class AuthServiceImpl implements AuthService
 	private RefreshTokenRepo refreshTokenRepo;
 	private PasswordEncoder passwordEncoder;
 	
+	
 	@Value("${myapp.access.expiry}")
 	private int accessExpiryInSecs;
 	@Value("${myapp.refresh.expiry}")
@@ -273,9 +274,11 @@ public class AuthServiceImpl implements AuthService
 		}).get();
 	}
 	
-
+	
+	
 //	=========================================================================================================================================
 	
+
 	private void blockAccessTokens(List<AccessToken> accessTokens)
 	{
 		accessTokens.forEach(at -> {
@@ -393,6 +396,7 @@ public class AuthServiceImpl implements AuthService
 		return (T) user;
 	}
 	
+	@SuppressWarnings("unused")
 	private User saveUser(User user) 
 	{
 		switch (user.getUserRole()) 

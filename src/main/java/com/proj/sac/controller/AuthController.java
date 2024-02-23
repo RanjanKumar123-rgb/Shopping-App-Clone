@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proj.sac.requestdto.AuthRequest;
 import com.proj.sac.requestdto.OTPmodel;
+import com.proj.sac.requestdto.StoreRequest;
 import com.proj.sac.requestdto.UserRequest;
 import com.proj.sac.responsedto.AuthResponse;
 import com.proj.sac.responsedto.UserResponse;
