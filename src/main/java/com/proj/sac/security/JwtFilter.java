@@ -1,7 +1,7 @@
 package com.proj.sac.security;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter
 			
 			if(at!=null && rt!=null)
 			{
-				Optional<AccessToken> accessToken = accessTokenRepo.findByTokenAndIsBlocked(at, false);
+				List<AccessToken> accessToken = accessTokenRepo.findByTokenAndIsBlocked(at, false);
 				
 				if(accessToken == null)
 					throw new RuntimeException();
