@@ -30,14 +30,14 @@ public class StoreController
 	
 	@PreAuthorize(value = "hasAuthority('SELLER')")
 	@PostMapping(path = "/stores/{sellerId}")
-	public ResponseEntity<SimpleResponseStructure> createStore(@RequestBody StoreRequest storeRequest, HttpServletResponse response, @PathVariable int sellerId)
+	public ResponseEntity<ResponseStructure<Store>> createStore(@RequestBody StoreRequest storeRequest, HttpServletResponse response, @PathVariable int sellerId)
 	{
 		return service.createStore(storeRequest, response, sellerId);
 	}
 	
 	@PreAuthorize(value = "hasAuthority('SELLER')")
 	@PutMapping(path = "/stores/{storeId}")
-	public ResponseEntity<SimpleResponseStructure> updateStore(@RequestBody StoreRequest storeRequest, HttpServletResponse response, @PathVariable int storeId)
+	public ResponseEntity<ResponseStructure<Store>> updateStore(@RequestBody StoreRequest storeRequest, HttpServletResponse response, @PathVariable int storeId)
 	{
 		return service.updateStore(storeRequest, response, storeId);
 	}

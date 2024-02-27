@@ -11,9 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface StoreService
 {
-	ResponseEntity<SimpleResponseStructure> createStore(StoreRequest storeRequest, HttpServletResponse response, int sellerId);
+	ResponseEntity<ResponseStructure<Store>> createStore(StoreRequest storeRequest, HttpServletResponse response, int sellerId);
 
-	ResponseEntity<SimpleResponseStructure> updateStore(StoreRequest storeRequest, HttpServletResponse response, int storeId);
+	ResponseEntity<ResponseStructure<Store>> updateStore(StoreRequest storeRequest, HttpServletResponse response, int storeId);
 
 	ResponseEntity<ResponseStructure<Store>> findStoreByStoreId(HttpServletResponse response, int storeId);
 
