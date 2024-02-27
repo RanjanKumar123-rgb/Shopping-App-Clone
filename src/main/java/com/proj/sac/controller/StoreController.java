@@ -15,7 +15,6 @@ import com.proj.sac.entity.Store;
 import com.proj.sac.requestdto.StoreRequest;
 import com.proj.sac.service.StoreService;
 import com.proj.sac.util.ResponseStructure;
-import com.proj.sac.util.SimpleResponseStructure;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;

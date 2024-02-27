@@ -15,7 +15,6 @@ import com.proj.sac.entity.Address;
 import com.proj.sac.requestdto.AddressRequest;
 import com.proj.sac.service.AddressService;
 import com.proj.sac.util.ResponseStructure;
-import com.proj.sac.util.SimpleResponseStructure;
 
 import lombok.AllArgsConstructor;
 
