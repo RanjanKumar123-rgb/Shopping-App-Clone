@@ -10,9 +10,9 @@ import com.proj.sac.util.SimpleResponseStructure;
 public interface AddressService 
 {
 
-	ResponseEntity<SimpleResponseStructure> addAddress(AddressRequest addressRequest, int sellerId);
+	ResponseEntity<ResponseStructure<Address>> addAddress(AddressRequest addressRequest, int sellerId);
 
-	ResponseEntity<SimpleResponseStructure> updateAddress(AddressRequest addressRequest, int addressId);
+	ResponseEntity<ResponseStructure<Address>> updateAddress(AddressRequest addressRequest, int addressId);
 
 	ResponseEntity<ResponseStructure<Address>> findAddresssByAddressId(int addressId);
 

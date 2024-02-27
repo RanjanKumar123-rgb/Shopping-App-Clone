@@ -29,14 +29,14 @@ public class AddressController
 	
 	@PreAuthorize(value = "hasAuthority('SELLER')")
 	@PostMapping(path = "/addresses/{sellerId}")
-	public ResponseEntity<SimpleResponseStructure> addAddress(@RequestBody AddressRequest addressRequest, @PathVariable int sellerId)
+	public ResponseEntity<ResponseStructure<Address>> addAddress(@RequestBody AddressRequest addressRequest, @PathVariable int sellerId)
 	{
 		return service.addAddress(addressRequest, sellerId);
 	}
 	
 	@PreAuthorize(value = "hasAuthority('SELLER')")
 	@PutMapping(path = "/addresses/{addressId}")
-	public ResponseEntity<SimpleResponseStructure> updateAddress(@RequestBody AddressRequest addressRequest, @PathVariable int addressId)
+	public ResponseEntity<ResponseStructure<Address>> updateAddress(@RequestBody AddressRequest addressRequest, @PathVariable int addressId)
 	{
 		return service.updateAddress(addressRequest, addressId);
 	}

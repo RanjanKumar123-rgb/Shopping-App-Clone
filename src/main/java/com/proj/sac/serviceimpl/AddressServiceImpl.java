@@ -16,51 +16,47 @@ import com.proj.sac.repo.StoreRepo;
 import com.proj.sac.requestdto.AddressRequest;
 import com.proj.sac.service.AddressService;
 import com.proj.sac.util.ResponseStructure;
-import com.proj.sac.util.SimpleResponseStructure;
 
 @Service
 public class AddressServiceImpl implements AddressService
 {
 	private AddressRepo addressRepo;
-	private SimpleResponseStructure simpleStructure;
 	private SellerRepo sellerRepo;
 	private ResponseStructure<Address> addressStructure;
 	private StoreRepo storeRepo;
 	
-	public AddressServiceImpl(AddressRepo addressRepo, 
-			SimpleResponseStructure simpleStructure,
+	public AddressServiceImpl(AddressRepo addressRepo,
 			ResponseStructure<Address> addressStructure,
 			SellerRepo sellerRepo,
 			StoreRepo storeRepo)
 	{
 		super();
 		this.addressRepo = addressRepo;
-		this.simpleStructure = simpleStructure;
 		this.addressStructure = addressStructure;
 		this.sellerRepo = sellerRepo;
 		this.storeRepo = storeRepo;
 	}
 
 	@Override
-	public ResponseEntity<SimpleResponseStructure> addAddress(AddressRequest addressRequest, int sellerId) 
+	public ResponseEntity<ResponseStructure<Address>> addAddress(AddressRequest addressRequest, int sellerId) 
 	{
 		Seller seller = sellerRepo.findById(sellerId).get();
 		Store store = seller.getStore();
 		
 		Address address = mapToAddress(addressRequest, seller);
+		addressRepo.save(address);
 		store.setAddress(address);
 		storeRepo.save(store);
-		
-		addressRepo.save(address);
 				
-		simpleStructure.setMessage("Address Successfully Added !!");
-		simpleStructure.setStatusCode(HttpStatus.CREATED.value());
+		addressStructure.setMessage("Address Successfully Added !!");
+		addressStructure.setStatusCode(HttpStatus.CREATED.value());
+		addressStructure.setData(address);
 		        
-		return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+		return new ResponseEntity<ResponseStructure<Address>>(addressStructure,HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<SimpleResponseStructure> updateAddress(AddressRequest addressRequest, int addressId) 
+	public ResponseEntity<ResponseStructure<Address>> updateAddress(AddressRequest addressRequest, int addressId) 
 	{
 		Address address = addressRepo.findById(addressId).get();
 		address.setStreetAddress(addressRequest.getStreetAddress());
@@ -73,10 +69,11 @@ public class AddressServiceImpl implements AddressService
 		
 		addressRepo.save(address);
 		
-		simpleStructure.setMessage("Address Successfully Updated !!");
-		simpleStructure.setStatusCode(HttpStatus.OK.value());
+		addressStructure.setMessage("Address Successfully Updated !!");
+		addressStructure.setStatusCode(HttpStatus.OK.value());
+		addressStructure.setData(address);
 		        
-		return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+		return new ResponseEntity<ResponseStructure<Address>>(addressStructure,HttpStatus.OK);
 	}
 	
 	@Override

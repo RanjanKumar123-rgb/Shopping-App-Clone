@@ -25,24 +25,21 @@ import lombok.extern.slf4j.Slf4j;
 public class StoreServiceImpl implements StoreService
 {
 	private StoreRepo storeRepo;
-	private SimpleResponseStructure simpleStructure;
 	private SellerRepo sellerRepo;
 	private ResponseStructure<Store> storeStructure;
 	
 
-	public StoreServiceImpl(StoreRepo storeRepo, 
-			SimpleResponseStructure simpleStructure, 
+	public StoreServiceImpl(StoreRepo storeRepo,  
 			ResponseStructure<Store> storeStructure,
 			SellerRepo sellerRepo) {
 		super();
 		this.storeRepo = storeRepo;
-		this.simpleStructure = simpleStructure;
 		this.storeStructure = storeStructure;
 		this.sellerRepo = sellerRepo;
 	}
 
 	@Override
-	public ResponseEntity<SimpleResponseStructure> createStore(StoreRequest storeRequest, HttpServletResponse response, int sellerId) 
+	public ResponseEntity<ResponseStructure<Store>> createStore(StoreRequest storeRequest, HttpServletResponse response, int sellerId) 
 	{
 		Seller seller = sellerRepo.findById(sellerId).get();
 		if(seller.getStore()!=null)
@@ -54,25 +51,27 @@ public class StoreServiceImpl implements StoreService
 			seller.setStore(store);
 			sellerRepo.save(seller);
 					
-			simpleStructure.setMessage("Store Created");
-			simpleStructure.setStatusCode(HttpStatus.OK.value());
+			storeStructure.setMessage("Store Created");
+			storeStructure.setStatusCode(HttpStatus.OK.value());
+			storeStructure.setData(store);
 			        
-			return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+			return new ResponseEntity<ResponseStructure<Store>>(storeStructure,HttpStatus.OK);
 		}
 	}
 	
 	@Override
-	public ResponseEntity<SimpleResponseStructure> updateStore(StoreRequest storeRequest, HttpServletResponse response, int storeId) 
+	public ResponseEntity<ResponseStructure<Store>> updateStore(StoreRequest storeRequest, HttpServletResponse response, int storeId) 
 	{
 		Store store = storeRepo.findById(storeId).get();
 		store.setStoreName(storeRequest.getStoreName());
 		store.setAbout(storeRequest.getAbout());
 		storeRepo.save(store);
 		
-		simpleStructure.setMessage("Updated");
-        simpleStructure.setStatusCode(HttpStatus.OK.value());
+		storeStructure.setMessage("Updated");
+		storeStructure.setStatusCode(HttpStatus.OK.value());
+		storeStructure.setData(store);
         
-        return new ResponseEntity<>(simpleStructure,HttpStatus.OK);
+        return new ResponseEntity<ResponseStructure<Store>>(storeStructure,HttpStatus.OK);
 	}
 	
 	@Override
