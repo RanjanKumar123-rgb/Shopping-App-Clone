@@ -43,7 +43,8 @@ public class ImageServiceImpl implements ImageService
 			}
 			
 			imageRepo.save(storeImage);
-			
+			store.setLogoLink(storeImage.getImageId());
+			storeRepo.save(store);
 			return storeImage;
 		}).orElseThrow(() -> new StoreNotFoundException("Store object not found !!!"));
 		

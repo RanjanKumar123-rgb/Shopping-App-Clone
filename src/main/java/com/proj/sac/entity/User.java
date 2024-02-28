@@ -1,5 +1,6 @@
 package com.proj.sac.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.proj.sac.enums.UserRole;
 
 import jakarta.persistence.Entity;
@@ -30,6 +31,7 @@ public class User
 	private int userId;
 	private String username;
 	private String email;
+	@JsonIgnore
 	private String password;
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole;
