@@ -27,20 +27,22 @@ public class JwtService
 	@Value("${myapp.refresh.expiry}")
 	private Long refreshExpireationInSecs;
 	
-	public String generateAccessToken(String username)
+	public static final String CLAIM_ROLE = "role";
+	
+	public String generateAccessToken(String userRole, String username)
 	{
-		return generateJWT(new HashMap<String, Object>(), username, accessExpireationInSecs * 1000l);
+		return generateJWT(userRole, username, accessExpireationInSecs * 1000l);
 	}
 	
-	public String generateRefreshToken(String username)
+	public String generateRefreshToken(String userRole, String username)
 	{
-		return generateJWT(new HashMap<String, Object>(), username,  refreshExpireationInSecs * 1000l);
+		return generateJWT(userRole, username,  refreshExpireationInSecs * 1000l);
 	}
 	
-	private String generateJWT(Map<String , Object> claims, String username, Long expiry)
+	private String generateJWT(String role, String username, Long expiry)
 	{
 		return Jwts.builder()
-				.setClaims(claims)
+				.setClaims(Map.of(CLAIM_ROLE, role))
 				.setSubject(username)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + expiry))
@@ -63,5 +65,10 @@ public class JwtService
 	public String extractUsername(String token)
 	{
 		return jwtParser(token).getSubject();
+	}
+	
+	public String extractUserRole(String token)
+	{
+		return jwtParser(token).get(CLAIM_ROLE, String.class);
 	}
 }

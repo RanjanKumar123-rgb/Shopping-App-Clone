@@ -8,11 +8,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.proj.sac.exception.AccessTokenNotFoundException;
 import com.proj.sac.exception.UserAlreadyExistEception;
+import com.proj.sac.util.ErrorStructure;
 
 @RestControllerAdvice
 public class AuthExceptionHandler 
 {
+    private final ObjectMapper objectMapper;
+
+    public AuthExceptionHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+	
 	private static ResponseEntity<Object> structure(HttpStatus status, String message, Object rootcause)
 	{
 		return new ResponseEntity<Object>(Map.of(
@@ -29,8 +38,32 @@ public class AuthExceptionHandler
 	}
 	
 	@ExceptionHandler(UsernameNotFoundException.class)
-	public ResponseEntity<Object> handleUsernameNotFoundException(UserAlreadyExistEception ex)
+	public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex)
 	{
-		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Failed to authenticate the User !!!");
+		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Failed to authenticate the User or Username not found !!!");
 	}
+	
+//	@ExceptionHandler(AccessTokenNotFoundException.class)
+//	public ResponseEntity<Object> handleAccessTokenNotFoundException(AccessTokenNotFoundException ex)
+//	{
+//		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Failed to locate Access Token or Access Token Expired !!!");
+//	}
+	
+	@ExceptionHandler(AccessTokenNotFoundException.class)
+    public ResponseEntity<Object> handleAccessTokenNotFoundException(AccessTokenNotFoundException ex) {
+        ErrorStructure<Object> errorStructure = new ErrorStructure<>();
+        
+        errorStructure.setMessage(ex.getMessage());
+        errorStructure.setStatus(HttpStatus.NOT_FOUND.value());
+        errorStructure.setRootCuase("Failed to locate Access Token or Access Token Expired !!!");
+        
+        try {
+            String json = objectMapper.writeValueAsString(errorStructure);
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("{\"message\":\"Error processing error response\"}", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+	
+	
 }

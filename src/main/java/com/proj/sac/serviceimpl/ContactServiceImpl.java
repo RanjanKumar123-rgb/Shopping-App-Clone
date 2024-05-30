@@ -94,7 +94,7 @@ public class ContactServiceImpl implements ContactService
 			
 			contactStructure.setData(contact);
 			contactStructure.setMessage("Fetchedd using Contact ID");
-			contactStructure.setStatusCode(HttpStatus.FOUND.value());
+			contactStructure.setStatusCode(HttpStatus.OK.value());
 			
 			return new ResponseEntity<ResponseStructure<Contact>>(contactStructure, HttpStatus.OK);
 		}

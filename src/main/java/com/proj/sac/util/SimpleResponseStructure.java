@@ -11,13 +11,15 @@ public class SimpleResponseStructure
 	public int getStatusCode() {
 		return statusCode;
 	}
-	public void setStatusCode(int statusCode) {
+	public SimpleResponseStructure setStatusCode(int statusCode) {
 		this.statusCode = statusCode;
+		return this;
 	}
 	public String getMessage() {
 		return message;
 	}
-	public void setMessage(String message) {
+	public SimpleResponseStructure setMessage(String message) {
 		this.message = message;
+		return this;
 	}
 }

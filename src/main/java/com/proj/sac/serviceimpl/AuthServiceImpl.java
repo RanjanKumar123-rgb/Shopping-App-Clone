@@ -39,6 +39,7 @@ import com.proj.sac.requestdto.UserRequest;
 import com.proj.sac.responsedto.AuthResponse;
 import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.security.JwtService;
+import com.proj.sac.securityfilters.FilterHelper;
 import com.proj.sac.service.AuthService;
 import com.proj.sac.util.CookieManager;
 import com.proj.sac.util.MessageStructure;
@@ -160,27 +161,28 @@ public class AuthServiceImpl implements AuthService
 	@Override
 	public ResponseEntity<ResponseStructure<AuthResponse>> login(String refreshToken, String accessToken, AuthRequest authRequest, HttpServletResponse response) 
 	{
-		if(accessToken != null || refreshToken !=null)  throw new RuntimeException("User already  logged in !!!");
+		if(accessToken != null || refreshToken !=null)  
+			throw new RuntimeException("User already  logged in !!!");
 		else {
-		String username = authRequest.getEmail().split("@")[0];
-		String password = authRequest.getPassword();
-		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
-		Authentication authentication = authenticationManager.authenticate(token);
-		if(!authentication.isAuthenticated())
-			throw new UsernameNotFoundException("Failed to authenticate the User");
-		else
-			return userRepo.findByUsername(username).map(user -> {
-				grantAccess(response, user);
-				return ResponseEntity.ok(authStructure.setStatusCode(HttpStatus.OK.value())
-									.setData(AuthResponse.builder()
-											.userId(user.getUserId())
-											.username(username)
-											.role(user.getUserRole().name())
-											.isAuthenticated(true)
-											.accessExpiration(LocalDateTime.now().plusSeconds(accessExpiryInSecs))
-											.refreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiryInSecs))
-											.build()).setMessage("Logged In"));
-			}).get();
+			String username = authRequest.getEmail().split("@")[0];
+			String password = authRequest.getPassword();
+			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+			Authentication authentication = authenticationManager.authenticate(token);
+			if(!authentication.isAuthenticated())
+				throw new UsernameNotFoundException("Failed to authenticate the User");
+			else
+				return userRepo.findByUsername(username).map(user -> {
+					grantAccess(response, user);
+					return ResponseEntity.ok(authStructure.setStatusCode(HttpStatus.OK.value())
+										.setData(AuthResponse.builder()
+												.userId(user.getUserId())
+												.username(username)
+												.role(user.getUserRole().name())
+												.isAuthenticated(true)
+												.accessExpiration(LocalDateTime.now().plusSeconds(accessExpiryInSecs))
+												.refreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiryInSecs))
+												.build()).setMessage("Logged In"));
+				}).get();
 		}
 	}
 	
@@ -312,8 +314,8 @@ public class AuthServiceImpl implements AuthService
 	private void grantAccess(HttpServletResponse response, User user)
 	{
 		//Generating access and refresh tokens
-		String accessToken = jwtService.generateAccessToken(user.getUsername());
-		String refreshToken = jwtService.generateRefreshToken(user.getUsername());
+		String accessToken = jwtService.generateAccessToken(user.getUserRole().toString(), user.getUsername());
+		String refreshToken = jwtService.generateRefreshToken(user.getUserRole().toString(), user.getUsername());
 		
 		//Adding access and refresh tokens cookies to the response
 		response.addCookie(cookieManager.configureCookie(new Cookie("at", accessToken), accessExpiryInSecs));
@@ -335,19 +337,25 @@ public class AuthServiceImpl implements AuthService
 				.build());
 	}
 	
-	private void sendOtpToMail(User user, String otp) throws MessagingException
-	{
-		sendMail(MessageStructure.builder()
-		.to(user.getEmail())
-		.subject("OTP for Registration in the Shopping App")
-		.sentDate(new Date())
-		.text(
-				"Hey, "+user.getUsername()
-				+".<br> Good to see you intrested in our Shopping App. <br>Complete your Registration using the OTP: <h1>"
-						+otp+"<h1>. <br>Note: The OTP expires within 5 mins.<br> With best Regards<br><br> Shopping App Clone"
-				)
-		.build());
-	}
+	private void sendOtpToMail(User user, String otp) throws MessagingException {
+        sendMail(MessageStructure.builder()
+                .to(user.getEmail())
+                .subject("OTP for Registration in the Shopping App")
+                .sentDate(new Date())
+                .text(
+                        "<html>"
+                        + "<body>"
+                        + "<p>Hey, " + user.getUsername() + ",</p>"
+                        + "<p>Good to see you interested in our Shopping App.</p>"
+                        + "<p>Complete your Registration using the OTP: <h1>" + otp + "</h1></p>"
+                        + "<p>Note: The OTP expires within 5 mins.</p>"
+                        + "<br>"
+                        + "<p>With best Regards,<br>Shopping App Clone</p>"
+                        + "</body>"
+                        + "</html>"
+                )
+                .build());
+    }
 	
 	private void sendRegSucessMail(User user) throws MessagingException
 	{

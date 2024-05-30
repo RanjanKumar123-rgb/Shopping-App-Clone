@@ -7,9 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 public class ShoppingAppCloneApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ShoppingAppCloneApplication.class, args);
 	}
-
 }

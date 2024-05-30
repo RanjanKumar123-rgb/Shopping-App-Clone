@@ -1,39 +1,39 @@
 package com.proj.sac.entity;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.proj.sac.enums.ProductAvailability;
+import com.proj.sac.enums.ProductCategory;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name = "products")
-@Entity
+@Document(collection = "products")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product 
 {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int productId;
+	@MongoId
+	private String productId;
 	private String productName;
 	private String productDescription;
 	private double productPrice;
 	private int productQuantity;
+	@Enumerated(EnumType.STRING)
 	private ProductAvailability productAvailability;
 	private double averageRating;
 	private int totalOrders;
+	@Enumerated(EnumType.STRING)
+	private ProductCategory productCategory;
 	
 	@JsonIgnore
-	@ManyToOne
-	private Seller seller;
+	private int sellerId;
 }
