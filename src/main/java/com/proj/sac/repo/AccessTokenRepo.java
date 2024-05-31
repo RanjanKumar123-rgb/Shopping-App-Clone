@@ -1,13 +1,11 @@
 package com.proj.sac.repo;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.proj.sac.entity.AccessToken;
 import com.proj.sac.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface AccessTokenRepo extends JpaRepository<AccessToken, Integer>
 {

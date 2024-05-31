@@ -36,9 +36,9 @@ public class AuthController
 	}
 
 	@PostMapping(path = "/verify-otp")
-	public ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(@RequestBody OTPmodel OTP)
+	public ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(@RequestBody OTPmodel otp)
 	{
-		return service.verifyOTP(OTP);
+		return service.verifyOTP(otp);
 	}
 	
 	@PostMapping(path = "/login")

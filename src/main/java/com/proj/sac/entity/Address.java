@@ -37,7 +37,7 @@ public class Address
 	private String city;
 	private String state;
 	private String country;
-	private int pincode;
+	private int pinCode;
 	@Enumerated(EnumType.STRING)
 	private AddressType addressType;
 	

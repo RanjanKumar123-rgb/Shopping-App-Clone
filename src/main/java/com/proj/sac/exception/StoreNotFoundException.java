@@ -1,16 +1,13 @@
 package com.proj.sac.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 @Component
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class StoreNotFoundException extends RuntimeException 
 {
-	private String message;
+	private final String message;
 }

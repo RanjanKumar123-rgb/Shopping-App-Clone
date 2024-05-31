@@ -1,15 +1,11 @@
 package com.proj.sac.exception;
 
-import lombok.Getter;
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class UsernameNotFoundException extends RuntimeException
 {
-	private String message;
+	private final String message;
 }

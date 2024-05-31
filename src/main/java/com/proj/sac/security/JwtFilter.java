@@ -1,22 +1,10 @@
 package com.proj.sac.security;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.proj.sac.entity.AccessToken;
 import com.proj.sac.exception.AccessTokenNotFoundException;
 import com.proj.sac.exception.UsernameNotFoundException;
 import com.proj.sac.repo.AccessTokenRepo;
 import com.proj.sac.securityfilters.FilterHelper;
-
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +13,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -32,27 +31,21 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtFilter extends OncePerRequestFilter {
 	private JwtService jwtService;
 	private AccessTokenRepo accessTokenRepo;
-	
-//	private CustomUserDetailsService userDetailsService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String at = null;
-//		String rt = null;
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("at"))
 					at = cookie.getValue();
-//				if (cookie.getName().equals("rt"))
-//					rt = cookie.getValue();
 			}
 
 			String username = null;
 			String userRole = null;
 
-//			if (at != null && rt != null) {
 			if (at != null) {
 				List<AccessToken> accessToken = accessTokenRepo.findByTokenAndIsBlocked(at, false);
 
@@ -60,8 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
 					throw new AccessTokenNotFoundException("Failed to locate Access Token");
 				else {
 					log.info("Authenticating the Token");
-					try {
-						
+					try{
 						username = jwtService.extractUsername(at);
 						userRole = jwtService.extractUserRole(at);
 					} catch (ExpiredJwtException e) {

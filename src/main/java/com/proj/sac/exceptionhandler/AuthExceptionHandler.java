@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.proj.sac.exception.AccessTokenNotFoundException;
-import com.proj.sac.exception.UserAlreadyExistEception;
+import com.proj.sac.exception.UserAlreadyExistException;
 import com.proj.sac.util.ErrorStructure;
 
 @RestControllerAdvice
@@ -22,17 +22,17 @@ public class AuthExceptionHandler
         this.objectMapper = objectMapper;
     }
 	
-	private static ResponseEntity<Object> structure(HttpStatus status, String message, Object rootcause)
+	private static ResponseEntity<Object> structure(HttpStatus status, String message, Object rootCause)
 	{
-		return new ResponseEntity<Object>(Map.of(
+		return new ResponseEntity<>(Map.of(
 				"status",status.value(),
 				"message",message,
-				"rootcause",rootcause
+				"rootCause",rootCause
 					),status);
 	}
 	
-	@ExceptionHandler(UserAlreadyExistEception.class)
-	public ResponseEntity<Object> handleUserAlreadyExistEception(UserAlreadyExistEception ex)
+	@ExceptionHandler(UserAlreadyExistException.class)
+	public ResponseEntity<Object> handleUserAlreadyExistException(UserAlreadyExistException ex)
 	{
 		return structure(HttpStatus.UNAUTHORIZED, ex.getMessage(), "User ID already exist. Try a new user id !!!");
 	}
@@ -42,12 +42,6 @@ public class AuthExceptionHandler
 	{
 		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Failed to authenticate the User or Username not found !!!");
 	}
-	
-//	@ExceptionHandler(AccessTokenNotFoundException.class)
-//	public ResponseEntity<Object> handleAccessTokenNotFoundException(AccessTokenNotFoundException ex)
-//	{
-//		return structure(HttpStatus.NOT_FOUND, ex.getMessage(), "Failed to locate Access Token or Access Token Expired !!!");
-//	}
 	
 	@ExceptionHandler(AccessTokenNotFoundException.class)
     public ResponseEntity<Object> handleAccessTokenNotFoundException(AccessTokenNotFoundException ex) {

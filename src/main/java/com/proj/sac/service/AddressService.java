@@ -1,11 +1,9 @@
 package com.proj.sac.service;
 
-import org.springframework.http.ResponseEntity;
-
 import com.proj.sac.entity.Address;
 import com.proj.sac.requestdto.AddressRequest;
 import com.proj.sac.util.ResponseStructure;
-import com.proj.sac.util.SimpleResponseStructure;
+import org.springframework.http.ResponseEntity;
 
 public interface AddressService 
 {
@@ -14,8 +12,8 @@ public interface AddressService
 
 	ResponseEntity<ResponseStructure<Address>> updateAddress(AddressRequest addressRequest, int addressId);
 
-	ResponseEntity<ResponseStructure<Address>> findAddresssByAddressId(int addressId);
+	ResponseEntity<ResponseStructure<Address>> findAddressByAddressId(int addressId);
 
-	ResponseEntity<ResponseStructure<Address>> findAddresssByStoreId(int storeId);
+	ResponseEntity<ResponseStructure<Address>> findAddressByStoreId(int storeId);
 	
 }

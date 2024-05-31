@@ -1,11 +1,5 @@
 package com.proj.sac.serviceimpl;
 
-import java.util.Optional;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import com.proj.sac.entity.Address;
 import com.proj.sac.entity.Seller;
 import com.proj.sac.entity.Store;
@@ -16,6 +10,11 @@ import com.proj.sac.repo.StoreRepo;
 import com.proj.sac.requestdto.AddressRequest;
 import com.proj.sac.service.AddressService;
 import com.proj.sac.util.ResponseStructure;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AddressServiceImpl implements AddressService
@@ -77,7 +76,7 @@ public class AddressServiceImpl implements AddressService
 	}
 	
 	@Override
-	public ResponseEntity<ResponseStructure<Address>> findAddresssByAddressId(int addressId) 
+	public ResponseEntity<ResponseStructure<Address>> findAddressByAddressId(int addressId)
 	{
 		Optional<Address> addresses = addressRepo.findById(addressId);
 		if(addresses == null)
@@ -96,7 +95,7 @@ public class AddressServiceImpl implements AddressService
 	}
 	
 	@Override
-	public ResponseEntity<ResponseStructure<Address>> findAddresssByStoreId(int storeId) 
+	public ResponseEntity<ResponseStructure<Address>> findAddressByStoreId(int storeId)
 	{
 		Store store = storeRepo.findById(storeId).get();
 		Address address = store.getAddress();

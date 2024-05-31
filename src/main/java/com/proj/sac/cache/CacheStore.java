@@ -7,7 +7,7 @@ import com.google.common.cache.CacheBuilder;
 
 public class CacheStore<T> 
 {
-	private Cache<String, T> cache;
+	private final Cache<String, T> cache;
 
 	public CacheStore(Duration expiry) 
 	{

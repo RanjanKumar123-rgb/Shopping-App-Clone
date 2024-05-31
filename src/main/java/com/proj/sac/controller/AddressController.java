@@ -42,16 +42,16 @@ public class AddressController
 	
 	@PreAuthorize(value = "hasAuthority('SELLER')")
 	@GetMapping(path = "/addresses/{addressId}")
-	public ResponseEntity<ResponseStructure<Address>> findAddresssByAddressId(@PathVariable int addressId)
+	public ResponseEntity<ResponseStructure<Address>> findAddressByAddressId(@PathVariable int addressId)
 	{
-		return service.findAddresssByAddressId(addressId);
+		return service.findAddressByAddressId(addressId);
 	}
 	
 	@PreAuthorize(value = "hasAuthority('SELLER')")
 	@GetMapping(path = "/storeId/{storeId}/addresses")
-	public ResponseEntity<ResponseStructure<Address>> findAddresssByStoreId(@PathVariable int storeId)
+	public ResponseEntity<ResponseStructure<Address>> findAddressByStoreId(@PathVariable int storeId)
 	{
-		return service.findAddresssByStoreId(storeId);
+		return service.findAddressByStoreId(storeId);
 	}
 	
 }
