@@ -1,13 +1,10 @@
 package com.proj.sac.service;
 
-import org.springframework.http.ResponseEntity;
-
 import com.proj.sac.entity.Store;
 import com.proj.sac.requestdto.StoreRequest;
 import com.proj.sac.util.ResponseStructure;
-import com.proj.sac.util.SimpleResponseStructure;
-
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
 
 public interface StoreService
 {

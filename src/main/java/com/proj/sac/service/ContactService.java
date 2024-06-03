@@ -1,14 +1,12 @@
 package com.proj.sac.service;
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-
 import com.proj.sac.entity.Contact;
-import com.proj.sac.requestdto.AddressRequest;
 import com.proj.sac.requestdto.ContactRequest;
 import com.proj.sac.util.ResponseStructure;
 import com.proj.sac.util.SimpleResponseStructure;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface ContactService 
 {

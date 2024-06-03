@@ -7,11 +7,6 @@ import com.proj.sac.util.ResponseStructure;
 
 public interface ImageService 
 {
-
 	ResponseEntity<ResponseStructure<String>> addStoreImage(int storeId, MultipartFile image);
-
 	ResponseEntity<byte[]> getStoreImage(String imageId);
-
-	
-	
 }

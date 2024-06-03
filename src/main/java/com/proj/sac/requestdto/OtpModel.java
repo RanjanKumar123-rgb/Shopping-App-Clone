@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OTPmodel 
+public class OtpModel
 {
 	private String email;
 	private String otp;	
