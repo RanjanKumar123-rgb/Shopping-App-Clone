@@ -35,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
+        log.info("Authenticating the Token");
         String at = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("at"))
                 .map(Cookie::getValue).toList().getFirst();
 
@@ -47,7 +48,6 @@ public class JwtFilter extends OncePerRequestFilter {
             if (accessToken == null)
                 throw new AccessTokenNotFoundException("Failed to locate Access Token");
             else {
-                log.info("Authenticating the Token");
                 try {
                     username = jwtService.extractUsername(at);
                     userRole = jwtService.extractUserRole(at);
@@ -63,6 +63,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 log.info("Authenticated Successfully");
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }
