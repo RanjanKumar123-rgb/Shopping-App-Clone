@@ -94,11 +94,13 @@ public class ProductServiceImpl implements ProductService
 			criteria.and("minPrice").lte(productRequest.getMinPrice());
 		
 		Query query = new Query(criteria);
-		log.info(String.valueOf(query.getQueryObject()));
 		List<Product> products = mongoTemplate.find(query, Product.class);
-		log.info("Product Data ", products);
+
+		productListStructure.setData(products);
+		productListStructure.setMessage("All Products Fetched");
+		productListStructure.setStatusCode(HttpStatus.FOUND.value());
 		
-		return null;
+		return new ResponseEntity<> (productListStructure, HttpStatus.OK);
 	}
 	
 	
