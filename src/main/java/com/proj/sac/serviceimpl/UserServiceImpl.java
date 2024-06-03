@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService
 			userStructure.setMessage("User Data Fetched");
 			userStructure.setStatusCode(HttpStatus.FOUND.value());
 			
-			return new ResponseEntity<ResponseStructure<User>>(userStructure, HttpStatus.OK);
+			return new ResponseEntity<>(userStructure, HttpStatus.OK);
 		}).orElseThrow(()-> new UserNotFoundException("Failed to find the user !!!"));
 	}
 	

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @AllArgsConstructor
-public class ContactExceedException extends RuntimeException 
-{
-	private final String message;
+public class UserRoleNotFoundException extends RuntimeException {
+    private final String message;
 }

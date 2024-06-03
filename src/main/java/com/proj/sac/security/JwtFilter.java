@@ -21,54 +21,48 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-	private JwtService jwtService;
-	private AccessTokenRepo accessTokenRepo;
+    private JwtService jwtService;
+    private AccessTokenRepo accessTokenRepo;
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
-		String at = null;
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("at"))
-					at = cookie.getValue();
-			}
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+        String at = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("at"))
+                .map(Cookie::getValue).toList().getFirst();
 
-			String username = null;
-			String userRole = null;
+        String username = null;
+        String userRole = null;
 
-			if (at != null) {
-				List<AccessToken> accessToken = accessTokenRepo.findByTokenAndIsBlocked(at, false);
+        if (at != null) {
+            List<AccessToken> accessToken = accessTokenRepo.findByTokenAndIsBlocked(at, false);
 
-				if (accessToken == null)
-					throw new AccessTokenNotFoundException("Failed to locate Access Token");
-				else {
-					log.info("Authenticating the Token");
-					try{
-						username = jwtService.extractUsername(at);
-						userRole = jwtService.extractUserRole(at);
-					} catch (ExpiredJwtException e) {
-						log.info("Tokens are expired");
-						FilterHelper.handleException(response, e.getMessage());
-					}
-					if (username == null)
-						throw new UsernameNotFoundException("Username doesnt exist !!!");
-					UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, null, Collections.singleton(new SimpleGrantedAuthority(userRole)));
-					token.setDetails(new WebAuthenticationDetails(request));
-					SecurityContextHolder.getContext().setAuthentication(token);
-					log.info("Authenticated Successfully");
-				}
-			}
-		}
-		filterChain.doFilter(request, response);
-	}
+            if (accessToken == null)
+                throw new AccessTokenNotFoundException("Failed to locate Access Token");
+            else {
+                log.info("Authenticating the Token");
+                try {
+                    username = jwtService.extractUsername(at);
+                    userRole = jwtService.extractUserRole(at);
+                } catch (ExpiredJwtException e) {
+                    log.info("Tokens are expired");
+                    FilterHelper.handleException(response, e.getMessage());
+                }
+                if (username == null)
+                    throw new UsernameNotFoundException("Username doesn't exist !!!");
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, null, Collections.singleton(new SimpleGrantedAuthority(userRole)));
+                token.setDetails(new WebAuthenticationDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(token);
+                log.info("Authenticated Successfully");
+            }
+        }
+        filterChain.doFilter(request,response);
+    }
 }

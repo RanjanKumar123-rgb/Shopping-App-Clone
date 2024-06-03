@@ -1,25 +1,18 @@
 package com.proj.sac.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.proj.sac.requestdto.AuthRequest;
-import com.proj.sac.requestdto.OTPmodel;
+import com.proj.sac.requestdto.OtpModel;
 import com.proj.sac.requestdto.UserRequest;
 import com.proj.sac.responsedto.AuthResponse;
 import com.proj.sac.responsedto.UserResponse;
 import com.proj.sac.service.AuthService;
 import com.proj.sac.util.ResponseStructure;
 import com.proj.sac.util.SimpleResponseStructure;
-
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -36,7 +29,7 @@ public class AuthController
 	}
 
 	@PostMapping(path = "/verify-otp")
-	public ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(@RequestBody OTPmodel otp)
+	public ResponseEntity<ResponseStructure<UserResponse>> verifyOTP(@RequestBody OtpModel otp)
 	{
 		return service.verifyOTP(otp);
 	}

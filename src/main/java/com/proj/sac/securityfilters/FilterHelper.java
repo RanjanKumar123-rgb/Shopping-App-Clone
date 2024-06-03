@@ -17,6 +17,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class FilterHelper {
+    private FilterHelper(){
+        //Added a private constructor to hide the automatically created constructor
+    }
+
 	public static void handleException(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("Application/json");
