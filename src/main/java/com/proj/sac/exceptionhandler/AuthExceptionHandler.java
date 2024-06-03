@@ -49,7 +49,7 @@ public class AuthExceptionHandler
         
         errorStructure.setMessage(ex.getMessage());
         errorStructure.setStatus(HttpStatus.NOT_FOUND.value());
-        errorStructure.setRootCuase("Failed to locate Access Token or Access Token Expired !!!");
+        errorStructure.setRootCause("Failed to locate Access Token or Access Token Expired !!!");
         
         try {
             String json = objectMapper.writeValueAsString(errorStructure);
