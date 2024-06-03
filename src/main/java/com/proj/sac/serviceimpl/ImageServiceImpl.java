@@ -58,12 +58,11 @@ public class ImageServiceImpl implements ImageService
 	@Override
 	public ResponseEntity<byte[]> getStoreImage(String imageId)
 	{
-	    return imageRepo.findById(imageId).map(image -> {
-	        return ResponseEntity.ok()
+	    return imageRepo.findById(imageId).map(image -> ResponseEntity.ok()
 	        		.contentType(MediaType.valueOf(image.getContentType()))
 	        		.contentLength(image.getImageByte().length)
-	        		.body(image.getImageByte());
-	    }).orElseThrow(() -> new ImageNotFoundException("Image not found !!!"));
+	        		.body(image.getImageByte())
+	    ).orElseThrow(() -> new ImageNotFoundException("Image not found !!!"));
 	}
 
 }
