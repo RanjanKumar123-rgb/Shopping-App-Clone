@@ -19,7 +19,7 @@ import com.proj.sac.util.ResponseStructure;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${app.base_url}")
 @AllArgsConstructor
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173/")
 public class AddressController 

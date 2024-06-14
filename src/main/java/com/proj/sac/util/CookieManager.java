@@ -8,7 +8,7 @@ import jakarta.servlet.http.Cookie;
 @Component
 public class CookieManager 
 {
-	@Value("${myapp.domain}")
+	@Value("${app.domain}")
 	private String domain;
 	
 	public Cookie configureCookie(Cookie cookie, int expirationInSecs)

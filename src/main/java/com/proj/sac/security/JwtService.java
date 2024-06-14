@@ -19,11 +19,11 @@ import java.util.Map;
 public class JwtService {
     public static final String CLAIM_ROLE = "role";
     private static final Logger log = LoggerFactory.getLogger(JwtService.class);
-    @Value("${myapp.secret}")
+    @Value("${app.jwt.secret}")
     private String secret;
-    @Value("${myapp.access.expiry}")
+    @Value("${app.jwt.token.access_expiry_seconds}")
     private Long accessExpireationInSecs;
-    @Value("${myapp.refresh.expiry}")
+    @Value("${app.jwt.token.refresh_expiry_seconds}")
     private Long refreshExpireationInSecs;
 
     public String generateAccessToken(String userRole, String username) {
