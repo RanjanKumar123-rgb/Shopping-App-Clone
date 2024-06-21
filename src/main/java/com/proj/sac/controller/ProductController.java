@@ -2,6 +2,8 @@ package com.proj.sac.controller;
 
 import java.util.List;
 
+import com.proj.sac.requestdto.ProductRequest;
+import com.proj.sac.requestdto.ProductRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proj.sac.entity.Product;
-import com.proj.sac.requestdto.ProductRequest;
-import com.proj.sac.requestdto.ProductRequestDto;
 import com.proj.sac.service.ProductService;
 import com.proj.sac.util.ResponseStructure;
 

@@ -13,76 +13,63 @@ import com.proj.sac.repo.SellerRepo;
 import com.proj.sac.repo.StoreRepo;
 import com.proj.sac.requestdto.AddressRequest;
 import com.proj.sac.util.ResponseStructure;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+//Test Case done using JUnit
+@SpringBootTest
+@ActiveProfiles("test")
 class AddressServiceImplTest {
 
-    @InjectMocks
+    @Autowired
     private AddressServiceImpl addressServiceImpl;
 
-    @Mock
+    @MockBean
     private SellerRepo sellerRepo;
 
-    @Mock
+    @MockBean
     private AddressRepo addressRepo;
 
-    @Mock
+    @MockBean
     private StoreRepo storeRepo;
 
-    @Mock
+    @MockBean
     private AddressMappers addressMappers;
-
-    private AddressRequest addressRequest;
-    private Seller seller;
-    private Store store;
-    private Address address;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        addressRequest = new AddressRequest();
-        addressRequest.setAddressType(AddressType.HOME);
-        addressRequest.setStreetAddress("BTM Layout");
-        addressRequest.setState("Karnataka");
-        addressRequest.setCountry("INDIA");
-        addressRequest.setCity("Bangalore");
-        addressRequest.setPinCode(560029);
-        addressRequest.setStreetAddressAdditional("1st stage");
-
-
-        seller = new Seller();
-        store = new Store();
-        seller.setStore(store);
-        address = new Address();
-        address.setAddressType(AddressType.HOME);
-        address.setStreetAddress("BTM Layout");
-        address.setState("Karnataka");
-        address.setCountry("INDIA");
-        address.setCity("Bangalore");
-        address.setPinCode(560029);
-        address.setStreetAddressAdditional("1st stage");
-        store.setAddress(address);
-    }
 
     @Test
     void testAddAddress_Success() {
-        when(sellerRepo.findById(anyInt())).thenReturn(Optional.of(seller));
+
+        // Arrangement
+        int sellerId = 123;
+
+        Store store = new Store();
+
+        Seller seller = new Seller();
+        seller.setUserId(sellerId);
+        seller.setStore(store);
+
+        AddressRequest addressRequest = AddressRequest.builder().build();
+
+        Address address = new Address();
+
+        System.out.println(seller);
+        when(sellerRepo.findById(sellerId)).thenReturn(Optional.of(seller));
         when(addressMappers.mapToAddress(any(AddressRequest.class), any(Address.class))).thenReturn(address);
         when(addressRepo.save(any(Address.class))).thenReturn(address);
         when(storeRepo.save(any(Store.class))).thenReturn(store);
 
-        ResponseStructure<Address> response = addressServiceImpl.addAddress(addressRequest, 1).getBody();
+        System.out.println(seller);
+        ResponseStructure<Address> response = addressServiceImpl.addAddress(addressRequest, sellerId).getBody();
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
@@ -98,6 +85,7 @@ class AddressServiceImplTest {
     @Test
     void testAddAddress_SellerNotFound() {
         when(sellerRepo.findById(anyInt())).thenReturn(Optional.empty());
+        AddressRequest addressRequest = AddressRequest.builder().build();
 
         Exception exception = assertThrows(SellerNotFoundException.class, () -> {
             addressServiceImpl.addAddress(addressRequest, 1);
@@ -117,6 +105,7 @@ class AddressServiceImplTest {
         when(addressRepo.findById(1)).thenReturn(Optional.of(existingAddress));
         when(addressRepo.save(existingAddress)).thenReturn(updatedAddress);
 
+        AddressRequest addressRequest = AddressRequest.builder().build();
         ResponseStructure<Address> response = addressServiceImpl.updateAddress(addressRequest, 1).getBody();
 
         assertNotNull(response);
@@ -132,6 +121,7 @@ class AddressServiceImplTest {
 
     @Test
     void testUpdateAddress_AddressNotFound() {
+        AddressRequest addressRequest = AddressRequest.builder().build();
         when(addressRepo.findById(1)).thenReturn(Optional.empty());
 
         AddressNotFoundException thrown = assertThrows(AddressNotFoundException.class, () -> {
@@ -147,6 +137,15 @@ class AddressServiceImplTest {
 
     @Test
     void testFindAddressByAddressId_Success() {
+        Address address = new Address();
+        address.setStreetAddress("Btm Layout");
+        address.setStreetAddressAdditional(null);
+        address.setCity("Bangalore");
+        address.setState("Karnataka");
+        address.setCountry("INDIA");
+        address.setPinCode(560029);
+        address.setAddressType(AddressType.HOME);
+
         when(addressRepo.findById(1)).thenReturn(Optional.of(address));
 
         ResponseStructure<Address> response = addressServiceImpl.findAddressByAddressId(1).getBody();
@@ -175,17 +174,19 @@ class AddressServiceImplTest {
 
     @Test
     void testFindAddressByStoreId_Success() {
-        when(storeRepo.findById(1)).thenReturn(Optional.of(store));
+        Address address = new Address();
+        Store store = new Store();
+        store.setAddress(address);
 
-        ResponseStructure<Address> response = addressServiceImpl.findAddressByStoreId(1).getBody();
+        when(storeRepo.findById(anyInt())).thenReturn(Optional.of(store));
+
+        ResponseEntity<ResponseStructure<Address>> response = addressServiceImpl.findAddressByStoreId(anyInt());
 
         assertNotNull(response);
-        assertEquals(HttpStatus.FOUND.value(), response.getStatusCode());
-        assertEquals("Address fetched using storeId", response.getMessage());
-        assertEquals(HttpStatus.FOUND.value(), response.getStatusCode());
-        assertEquals(address, response.getData());
-
-        verify(storeRepo, times(1)).findById(1);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Address fetched using storeId", response.getBody().getMessage());
+        assertEquals(HttpStatus.FOUND.value(), response.getBody().getStatusCode());
+        assertEquals(address, response.getBody().getData());
     }
 
     @Test

@@ -22,21 +22,22 @@ public class JwtService {
     @Value("${app.jwt.secret}")
     private String secret;
     @Value("${app.jwt.token.access_expiry_seconds}")
-    private Long accessExpireationInSecs;
+    private Long accessExpirationInSecs;
     @Value("${app.jwt.token.refresh_expiry_seconds}")
-    private Long refreshExpireationInSecs;
+    private Long refreshExpirationInSecs;
 
     public String generateAccessToken(String userRole, String username) {
         log.info("Generating Access Token");
-        return generateJWT(userRole, username, accessExpireationInSecs * 1000L);
+        return generateJWT(userRole, username, accessExpirationInSecs * 1000L);
     }
 
     public String generateRefreshToken(String userRole, String username) {
         log.info("Generating Refresh Token");
-        return generateJWT(userRole, username, refreshExpireationInSecs * 1000L);
+        return generateJWT(userRole, username, refreshExpirationInSecs * 1000L);
     }
 
     private String generateJWT(String role, String username, Long expiry) {
+        log.info("Generating JWT");
         return Jwts.builder().setClaims(Map.of(CLAIM_ROLE, role)).setSubject(username).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + expiry)).signWith(getSignature(), SignatureAlgorithm.HS512).compact();
     }
 

@@ -3,11 +3,10 @@ package com.proj.sac.security;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.proj.sac.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.proj.sac.entity.User;
 
 public class CustomUserDetails implements UserDetails
 {
