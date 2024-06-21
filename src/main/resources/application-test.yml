@@ -43,10 +43,12 @@ server:
 
 # JWT secret (dummy value for testing)
 app:
-  domain: localhost
-  base_url: /api/v1
   jwt:
     secret: myTestSecret
     token:
       access_expiry_seconds: 3600
       refresh_expiry_seconds: 1296000
+
+
+# Additional properties for testing environment
+# Add any additional properties specific to your testing needs
