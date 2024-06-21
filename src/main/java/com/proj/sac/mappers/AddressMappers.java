@@ -1,9 +1,10 @@
 package com.proj.sac.mappers;
 
 import com.proj.sac.entity.Address;
-import com.proj.sac.entity.Seller;
 import com.proj.sac.requestdto.AddressRequest;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AddressMappers
 {
     public Address mapToAddress(AddressRequest addressRequest, Address address) {

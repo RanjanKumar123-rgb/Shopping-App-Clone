@@ -1,5 +1,6 @@
 package com.proj.sac.securityfilters;
 
+import com.proj.sac.repo.RefreshTokenRepo;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.proj.sac.exception.UserNotLoggedInException;
-import com.proj.sac.repo.RefreshTokenRepo;
 import com.proj.sac.security.JwtService;
 
 import java.io.IOException;

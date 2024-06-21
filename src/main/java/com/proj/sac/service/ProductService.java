@@ -2,11 +2,11 @@ package com.proj.sac.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.proj.sac.entity.Product;
 import com.proj.sac.requestdto.ProductRequest;
 import com.proj.sac.requestdto.ProductRequestDto;
+import org.springframework.http.ResponseEntity;
+
 import com.proj.sac.util.ResponseStructure;
 
 public interface ProductService 
@@ -15,5 +15,5 @@ public interface ProductService
 
 	ResponseEntity<ResponseStructure<List<Product>>> getAllProducts(int sellerId);
 
-	ResponseEntity<ResponseStructure<List<Product>>> findAllProducts(ProductRequestDto productRequest);	
+	ResponseEntity<ResponseStructure<List<Product>>> findAllProducts(ProductRequestDto productRequest);
 }

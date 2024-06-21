@@ -1,7 +1,7 @@
 package com.proj.sac.controller;
 
-import com.proj.sac.entity.Contact;
 import com.proj.sac.requestdto.ContactRequest;
+import com.proj.sac.entity.Contact;
 import com.proj.sac.service.ContactService;
 import com.proj.sac.util.ResponseStructure;
 import com.proj.sac.util.SimpleResponseStructure;

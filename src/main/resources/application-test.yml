@@ -1,7 +1,7 @@
+# MySQL Configuration for Testing
 spring:
-  #  MySQL Configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/shoppingdb?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/test_shoppingdb?createDatabaseIfNotExist=true
     username: root
     password: Ranjan@2022
   jpa:
@@ -14,18 +14,20 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
 
-  # MongoDB Configuration
+
+  # MongoDB Configuration for Testing
   data:
     mongodb:
       host: localhost
       port: 27017
-      database: shoppingdb
+      database: test_shoppingdb
 
-  # SMTP Configuration
+
+  # SMTP Configuration (dummy values for testing)
   mail:
-    host: smtp.gmail.com
-    username: ${mail.username}
-    password: ${mail.pwd}
+    host: localhost
+    username: test@gmail.com
+    password: testpassword
     properties:
       mail:
         smtp:
@@ -33,19 +35,18 @@ spring:
             enable: true
             required: true
 
-# Server Configuration
-server:
-  port: 7000
 
-logging:
-  level:
-    root: DEBUG
-# JWT secret
+# Server Configuration for Testing
+server:
+  port: 8081
+
+
+# JWT secret (dummy value for testing)
 app:
   domain: localhost
   base_url: /api/v1
   jwt:
-    secret: ${jwt.secret}
+    secret: myTestSecret
     token:
       access_expiry_seconds: 3600
       refresh_expiry_seconds: 1296000

@@ -1,11 +1,11 @@
 package com.proj.sac.entity;
 
+import com.proj.sac.enums.ProductAvailability;
+import com.proj.sac.enums.ProductCategory;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.proj.sac.enums.ProductAvailability;
-import com.proj.sac.enums.ProductCategory;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

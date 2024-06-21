@@ -1,9 +1,8 @@
 package com.proj.sac.entity;
 
+import com.proj.sac.enums.ImageType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.proj.sac.enums.ImageType;
 
 import lombok.Data;
 

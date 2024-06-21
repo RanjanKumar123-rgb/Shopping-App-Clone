@@ -1,7 +1,5 @@
 package com.proj.sac.serviceimpl;
 
-import com.proj.sac.entity.Address;
-import com.proj.sac.entity.Store;
 import com.proj.sac.exception.AddressNotFoundException;
 import com.proj.sac.exception.SellerNotFoundException;
 import com.proj.sac.exception.StoreNotFoundException;
@@ -10,6 +8,8 @@ import com.proj.sac.repo.AddressRepo;
 import com.proj.sac.repo.SellerRepo;
 import com.proj.sac.repo.StoreRepo;
 import com.proj.sac.requestdto.AddressRequest;
+import com.proj.sac.entity.Address;
+import com.proj.sac.entity.Store;
 import com.proj.sac.service.AddressService;
 import com.proj.sac.util.ResponseStructure;
 import org.springframework.http.HttpStatus;
