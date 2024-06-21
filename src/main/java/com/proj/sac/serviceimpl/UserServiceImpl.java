@@ -1,11 +1,11 @@
 package com.proj.sac.serviceimpl;
 
+import com.proj.sac.entity.User;
+import com.proj.sac.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.proj.sac.entity.User;
-import com.proj.sac.exception.UserNotFoundException;
 import com.proj.sac.repo.UserRepo;
 import com.proj.sac.service.UserService;
 import com.proj.sac.util.ResponseStructure;
@@ -30,5 +30,4 @@ public class UserServiceImpl implements UserService
 			return new ResponseEntity<>(userStructure, HttpStatus.OK);
 		}).orElseThrow(()-> new UserNotFoundException("Failed to find the user !!!"));
 	}
-	
 }

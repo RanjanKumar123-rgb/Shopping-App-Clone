@@ -1,0 +1,54 @@
+# MySQL Configuration for Testing
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/test_shoppingdb?createDatabaseIfNotExist=true
+    username: root
+    password: Ranjan@2022
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+
+  # MongoDB Configuration for Testing
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: test_shoppingdb
+
+
+  # SMTP Configuration (dummy values for testing)
+  mail:
+    host: localhost
+    username: test@gmail.com
+    password: testpassword
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+
+
+# Server Configuration for Testing
+server:
+  port: 8081
+
+
+# JWT secret (dummy value for testing)
+app:
+  jwt:
+    secret: myTestSecret
+    token:
+      access_expiry_seconds: 3600
+      refresh_expiry_seconds: 1296000
+
+
+# Additional properties for testing environment
+# Add any additional properties specific to your testing needs

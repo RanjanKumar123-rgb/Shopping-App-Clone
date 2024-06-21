@@ -15,7 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${app.base_url}")
 @AllArgsConstructor
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173/")
 public class AuthController 
@@ -35,14 +35,14 @@ public class AuthController
 	}
 	
 	@PostMapping(path = "/login")
-	public ResponseEntity<ResponseStructure<AuthResponse>> login(@CookieValue(name = "rt", required = false) String refreshToken,@CookieValue(name = "at", required = false) String accessToken, @RequestBody AuthRequest authRequest, HttpServletResponse response)
+	public ResponseEntity<ResponseStructure<AuthResponse>> login(@CookieValue(name = "rt", required = false) String refreshToken, @CookieValue(name = "at", required = false) String accessToken, @RequestBody AuthRequest authRequest, HttpServletResponse response)
 	{
 		return service.login(refreshToken, accessToken, authRequest, response);
 	}
 	
 	@PreAuthorize(value = "hasAuthority('SELLER') or hasAuthority('CUSTOMER')")
 	@PostMapping(path = "/logout")
-	public ResponseEntity<SimpleResponseStructure> logout(@CookieValue(name = "rt", required = false) String refreshToken,@CookieValue(name = "at", required = false) String accessToken ,HttpServletResponse response)
+	public ResponseEntity<SimpleResponseStructure> logout(@CookieValue(name = "rt", required = false) String refreshToken, @CookieValue(name = "at", required = false) String accessToken , HttpServletResponse response)
 	{
 		return service.logout(refreshToken, accessToken, response);
 	}

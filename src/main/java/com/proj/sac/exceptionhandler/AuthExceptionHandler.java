@@ -34,6 +34,7 @@ public class AuthExceptionHandler
 	@ExceptionHandler(UserAlreadyExistException.class)
 	public ResponseEntity<Object> handleUserAlreadyExistException(UserAlreadyExistException ex)
 	{
+
 		return structure(HttpStatus.UNAUTHORIZED, ex.getMessage(), "User ID already exist. Try a new user id !!!");
 	}
 	

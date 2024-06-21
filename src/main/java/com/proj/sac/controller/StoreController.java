@@ -1,5 +1,6 @@
 package com.proj.sac.controller;
 
+import com.proj.sac.requestdto.StoreRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proj.sac.entity.Store;
-import com.proj.sac.requestdto.StoreRequest;
 import com.proj.sac.service.StoreService;
 import com.proj.sac.util.ResponseStructure;
 
@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${app.base_url}")
 @AllArgsConstructor
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173/")
 public class StoreController 

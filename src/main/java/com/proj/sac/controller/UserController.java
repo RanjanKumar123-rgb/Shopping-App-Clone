@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${app.base_url}")
 @AllArgsConstructor
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173/")
 public class UserController 
